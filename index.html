@@ -42,7 +42,7 @@
     .quick-facts{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
     .fact{padding:9px 13px;border:1px solid rgba(255,255,255,.36);border-radius:999px;background:rgba(25,15,15,.25);font-size:.85rem;font-weight:600;backdrop-filter:blur(4px)}
     .tabs-shell{position:sticky;top:10px;z-index:20;margin:18px auto 52px;width:min(760px,calc(100% - 28px));padding:7px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px rgba(45,31,28,.1);backdrop-filter:blur(10px)}
-    .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
     .tab-btn{border:0;border-radius:12px;padding:13px 14px;background:transparent;color:var(--muted);font-weight:700;cursor:pointer}
     .tab-btn[aria-selected="true"]{background:var(--accent);color:#fff}
     .panel[hidden]{display:none}
@@ -262,6 +262,57 @@
     @media (max-width:560px){.mcar-slide{padding:0 40px}.mcar-arrow{width:30px;height:30px;font-size:1.1rem}.mcar-prev{left:2px}.mcar-next{right:2px}}
 
   </style>
+  <style>
+    /* ---- Calorie tracker ---- */
+    .cal-head{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;margin:6px 0 18px}
+    .cal-goal{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+    .cal-goal label{font-weight:600;font-size:.9rem;color:var(--muted)}
+    .cal-goal input{width:90px;font:inherit;font-weight:700;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;color:var(--text)}
+    .cal-daynav{display:flex;align-items:center;gap:8px}
+    .cal-daynav button{font:inherit;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600}
+    .cal-daynav .cal-date{font-weight:700;min-width:150px;text-align:center}
+    .cal-progress{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;margin:0 0 22px;box-shadow:var(--shadow)}
+    .cal-total{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+    .cal-total strong{font-family:"Newsreader",Georgia,serif;font-size:2.2rem;letter-spacing:-.02em}
+    .cal-total span{color:var(--muted);font-weight:600}
+    .cal-bar{height:16px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+    .cal-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .4s ease}
+    .cal-note{margin-top:8px;color:var(--muted);font-size:.92rem}
+    .cal-search{width:100%;font:inherit;font-size:1.05rem;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 6px;background:#fff;color:var(--text)}
+    .cal-search:focus{outline:2px solid var(--accent-2);border-color:var(--accent-2)}
+    .cal-results{display:grid;gap:8px;margin:10px 0 26px;max-height:380px;overflow:auto;padding-right:2px}
+    .cal-food{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+    .cal-food .fi{flex:1;min-width:0}
+    .cal-food .fi b{display:block;font-size:1rem;text-transform:capitalize}
+    .cal-food .fi small{color:var(--muted)}
+    .cal-food .kc{font-weight:700;white-space:nowrap}
+    .cal-food .kc small{display:block;font-weight:600;color:var(--muted);font-size:.75rem;text-align:right}
+    .cal-add{font:inherit;font-weight:700;border:none;border-radius:10px;background:var(--accent);color:#fff;padding:10px 16px;cursor:pointer}
+    .cal-add:active{transform:scale(.96)}
+    .cal-log{display:grid;gap:8px;margin:0 0 8px}
+    .cal-empty{color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:18px;text-align:center}
+    .cal-row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+    .cal-row .fi{flex:1;min-width:0}
+    .cal-row .fi b{display:block;text-transform:capitalize}
+    .cal-row .fi small{color:var(--muted)}
+    .stepper{display:flex;align-items:center;gap:8px}
+    .stepper button{font:inherit;font-weight:700;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:1.1rem;line-height:1}
+    .stepper button:active{transform:scale(.94)}
+    .stepper .sv{min-width:44px;text-align:center;font-weight:700}
+    .cal-row .kc{font-weight:700;min-width:64px;text-align:right}
+    .cal-del{border:none;background:none;color:var(--muted);font-size:1.25rem;cursor:pointer;padding:4px 6px}
+    .cal-custom{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;margin:22px 0 0}
+    .cal-custom h3{margin:0 0 4px;font-size:1.15rem}
+    .cal-custom p{margin:0 0 12px;color:var(--muted);font-size:.92rem}
+    .cal-custom .row{display:flex;gap:8px;flex-wrap:wrap}
+    .cal-custom input{font:inherit;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--text)}
+    .cal-custom input[name=cname]{flex:2;min-width:160px}
+    .cal-custom input[name=kc]{flex:1;min-width:110px}
+    .cal-custom button{font:inherit;font-weight:700;border:none;border-radius:10px;background:var(--sage);color:#fff;padding:10px 18px;cursor:pointer}
+    .cal-sec{margin:26px 0 8px;font-size:1.3rem}
+    @media (max-width:560px){.cal-food .kc small{display:none}}
+
+  </style>
 </head>
 <body>
   <header class="hero">
@@ -283,6 +334,7 @@
       <button class="tab-btn" role="tab" aria-selected="true" aria-controls="mindful-panel" id="mindful-tab">Stretch</button>
       <button class="tab-btn" role="tab" aria-selected="false" aria-controls="workout-panel" id="workout-tab">Workout</button>
       <button class="tab-btn" role="tab" aria-selected="false" aria-controls="meals-panel" id="meals-tab">Meal Prep</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="calories-panel" id="calories-tab">Calories</button>
     </div>
   </nav>
 
@@ -446,6 +498,49 @@
         <p class="hydro-note">💧 Drink plenty of water daily to stay hydrated &mdash; adding lemon or lime is a great added benefit.</p>
         <div class="prep-grid"><p><strong>Cook 2 proteins</strong>Bake a tray of chicken or fish and boil 6 eggs. Keep tuna, beans or Greek yogurt ready for no-cook days.</p><p><strong>Prep 2 bases</strong>Roast sweet potatoes and cook rice or quinoa. Wash greens and chop carrots, peppers and tomatoes.</p><p><strong>Build grab-and-go snacks</strong>Pair fruit with nuts, yogurt, cheese or peanut butter so each snack has staying power.</p></div>
       </aside>
+    </section>
+
+
+    <section class="panel" id="calories-panel" role="tabpanel" aria-labelledby="calories-tab" hidden>
+      <div class="cal-head">
+        <div>
+          <h2>Calorie Tracker</h2>
+          <p style="margin:6px 0 0;color:var(--muted)">Search a food, tap to add it, adjust servings. Your day saves on this device.</p>
+        </div>
+        <div class="cal-goal">
+          <label for="cal-goal-input">Daily goal</label>
+          <input id="cal-goal-input" type="number" inputmode="numeric" min="0" step="50" value="2000" />
+        </div>
+      </div>
+
+      <div class="cal-progress">
+        <div class="cal-daynav" style="margin-bottom:12px">
+          <button type="button" id="cal-prev" aria-label="Previous day">&lsaquo;</button>
+          <div class="cal-date" id="cal-date-label">Today</div>
+          <button type="button" id="cal-next" aria-label="Next day">&rsaquo;</button>
+          <button type="button" id="cal-today" style="margin-left:auto">Today</button>
+        </div>
+        <div class="cal-total"><strong id="cal-total">0</strong><span id="cal-of-goal">of 2,000 cal</span></div>
+        <div class="cal-bar" role="progressbar" aria-label="Calories toward daily goal"><div class="cal-fill" id="cal-fill"></div></div>
+        <div class="cal-note" id="cal-note"></div>
+      </div>
+
+      <h3 class="cal-sec">Today's food</h3>
+      <div class="cal-log" id="cal-log"></div>
+
+      <h3 class="cal-sec">Add food</h3>
+      <input class="cal-search" id="cal-search" type="search" placeholder="Search foods — try &quot;eggs&quot; or &quot;chicken&quot;" aria-label="Search foods" autocomplete="off" />
+      <div class="cal-results" id="cal-results"></div>
+
+      <div class="cal-custom">
+        <h3>Something else?</h3>
+        <p>Add a custom food with its calories — it works just like the rest.</p>
+        <div class="row">
+          <input name="cname" id="cal-cname" placeholder="Food name" aria-label="Custom food name" />
+          <input name="kc" id="cal-ckc" type="number" inputmode="numeric" min="0" placeholder="Calories per serving" aria-label="Calories per serving" />
+          <button type="button" id="cal-cadd">Add</button>
+        </div>
+      </div>
     </section>
 
     <footer class="fineprint">
@@ -1046,6 +1141,128 @@
     start(false);
   })();
   </script>
+
+<script>
+var FOODCALS=[{"item": "almonds", "serving": "1 oz (about 23)", "calories": 164}, {"item": "apple", "serving": "1 medium", "calories": 95}, {"item": "asparagus", "serving": "1 cup cooked", "calories": 40}, {"item": "avocado", "serving": "1/2 medium avocado", "calories": 120}, {"item": "avocado oil", "serving": "1 tbsp", "calories": 124}, {"item": "bacon", "serving": "2 slices cooked", "calories": 87}, {"item": "banana", "serving": "1 medium", "calories": 105}, {"item": "basil", "serving": "1/4 cup", "calories": 1}, {"item": "bell peppers", "serving": "1 medium pepper", "calories": 31}, {"item": "berries", "serving": "1 cup mixed", "calories": 70}, {"item": "black beans", "serving": "1/2 cup cooked", "calories": 114}, {"item": "black pepper", "serving": "1 tsp", "calories": 6}, {"item": "blueberries", "serving": "1 cup", "calories": 84}, {"item": "broccoli", "serving": "1 cup chopped, cooked", "calories": 55}, {"item": "brown rice", "serving": "1 cup cooked", "calories": 248}, {"item": "brussels sprouts", "serving": "1 cup cooked", "calories": 56}, {"item": "cabbage", "serving": "1 cup shredded, cooked", "calories": 34}, {"item": "canola oil", "serving": "1 tbsp", "calories": 124}, {"item": "carrots", "serving": "1 medium carrot", "calories": 25}, {"item": "cauliflower", "serving": "1 cup chopped, cooked", "calories": 29}, {"item": "celery", "serving": "1 stalk", "calories": 6}, {"item": "cheese", "serving": "1 oz cheddar", "calories": 114}, {"item": "chia seeds", "serving": "1 tbsp", "calories": 58}, {"item": "chicken breast", "serving": "4 oz cooked", "calories": 187}, {"item": "chickpeas", "serving": "1/2 cup cooked", "calories": 134}, {"item": "chili powder", "serving": "1 tsp", "calories": 8}, {"item": "cilantro", "serving": "1/4 cup", "calories": 1}, {"item": "cinnamon", "serving": "1 tsp", "calories": 6}, {"item": "coconut oil", "serving": "1 tbsp", "calories": 121}, {"item": "cod", "serving": "4 oz cooked", "calories": 105}, {"item": "corn", "serving": "1/2 cup cooked", "calories": 66}, {"item": "cottage cheese", "serving": "1/2 cup low-fat", "calories": 81}, {"item": "cream cheese", "serving": "2 tbsp light", "calories": 60}, {"item": "cucumber", "serving": "1/2 cup sliced", "calories": 8}, {"item": "cumin", "serving": "1 tsp", "calories": 8}, {"item": "dark chocolate", "serving": "1 oz", "calories": 170}, {"item": "eggs", "serving": "1 large egg", "calories": 70}, {"item": "feta", "serving": "1 oz", "calories": 75}, {"item": "flaxseed", "serving": "1 tbsp ground", "calories": 55}, {"item": "garlic", "serving": "1 clove", "calories": 4}, {"item": "garlic powder", "serving": "1 tsp", "calories": 9}, {"item": "ginger", "serving": "1 tbsp fresh grated", "calories": 9}, {"item": "grapes", "serving": "1 cup", "calories": 104}, {"item": "greek yogurt", "serving": "3/4 cup plain nonfat", "calories": 90}, {"item": "green beans", "serving": "1 cup cooked", "calories": 44}, {"item": "ground turkey", "serving": "4 oz cooked (93% lean)", "calories": 181}, {"item": "honey", "serving": "1 tbsp", "calories": 64}, {"item": "hot sauce", "serving": "1 tsp", "calories": 1}, {"item": "hummus", "serving": "2 tbsp", "calories": 70}, {"item": "impossible meat", "serving": "4 oz", "calories": 240}, {"item": "italian seasoning", "serving": "1 tsp", "calories": 5}, {"item": "kale", "serving": "2 cups raw", "calories": 16}, {"item": "ketchup", "serving": "1 tbsp", "calories": 19}, {"item": "lean beef", "serving": "4 oz cooked (90% lean)", "calories": 215}, {"item": "lemon", "serving": "1 tbsp juice", "calories": 4}, {"item": "lentils", "serving": "1/2 cup cooked", "calories": 115}, {"item": "lettuce", "serving": "2 cups shredded", "calories": 16}, {"item": "lime", "serving": "1 tbsp juice", "calories": 4}, {"item": "mango", "serving": "1 cup sliced", "calories": 99}, {"item": "maple syrup", "serving": "1 tbsp", "calories": 52}, {"item": "mayo", "serving": "1 tbsp", "calories": 94}, {"item": "milk", "serving": "1 cup 1%", "calories": 102}, {"item": "mozzarella", "serving": "1 oz part-skim", "calories": 72}, {"item": "mushrooms", "serving": "1 cup sliced, cooked", "calories": 44}, {"item": "mustard", "serving": "1 tbsp yellow", "calories": 9}, {"item": "oatmeal", "serving": "1 cup cooked", "calories": 158}, {"item": "oats", "serving": "1/2 cup dry rolled", "calories": 154}, {"item": "olive oil", "serving": "1 tbsp", "calories": 119}, {"item": "onion powder", "serving": "1 tsp", "calories": 7}, {"item": "onions", "serving": "1/2 cup chopped", "calories": 32}, {"item": "orange", "serving": "1 medium", "calories": 62}, {"item": "oregano", "serving": "1 tsp", "calories": 3}, {"item": "paprika", "serving": "1 tsp", "calories": 7}, {"item": "parmesan", "serving": "1 tbsp grated", "calories": 22}, {"item": "parsley", "serving": "1/4 cup", "calories": 5}, {"item": "pasta", "serving": "1 cup cooked", "calories": 220}, {"item": "peach", "serving": "1 medium", "calories": 59}, {"item": "peanut butter", "serving": "2 tbsp", "calories": 188}, {"item": "pear", "serving": "1 medium", "calories": 101}, {"item": "peas", "serving": "1/2 cup cooked", "calories": 62}, {"item": "pineapple", "serving": "1 cup chunks", "calories": 82}, {"item": "pork tenderloin", "serving": "4 oz cooked", "calories": 161}, {"item": "potato", "serving": "1 medium potato, baked", "calories": 161}, {"item": "quinoa", "serving": "1 cup cooked", "calories": 222}, {"item": "salmon", "serving": "4 oz cooked", "calories": 233}, {"item": "salsa", "serving": "1/4 cup", "calories": 18}, {"item": "salt", "serving": "1 tsp", "calories": 0}, {"item": "sausage", "serving": "1 link (3 oz) chicken sausage", "calories": 140}, {"item": "shrimp", "serving": "4 oz cooked", "calories": 112}, {"item": "sour cream", "serving": "2 tbsp light", "calories": 40}, {"item": "soy sauce", "serving": "1 tbsp", "calories": 9}, {"item": "spinach", "serving": "2 cups raw", "calories": 14}, {"item": "spring mixed greens", "serving": "2 cups", "calories": 20}, {"item": "strawberries", "serving": "1 cup", "calories": 49}, {"item": "sugar", "serving": "1 tsp", "calories": 16}, {"item": "sweet potato", "serving": "1 medium, baked", "calories": 103}, {"item": "tempeh", "serving": "4 oz", "calories": 226}, {"item": "tilapia", "serving": "4 oz cooked", "calories": 128}, {"item": "tofu", "serving": "1/2 cup firm", "calories": 94}, {"item": "tomatoes", "serving": "1 medium tomato", "calories": 22}, {"item": "tortilla chips", "serving": "1 oz (about 10 chips)", "calories": 142}, {"item": "tuna", "serving": "1 can (5 oz) in water, drained", "calories": 109}, {"item": "turkey bacon", "serving": "2 slices", "calories": 60}, {"item": "vegetable oil", "serving": "1 tbsp", "calories": 124}, {"item": "walnuts", "serving": "1 oz (about 14 halves)", "calories": 185}, {"item": "white rice", "serving": "1 cup cooked", "calories": 205}, {"item": "whole-grain bread", "serving": "1 slice", "calories": 81}, {"item": "whole-grain crackers", "serving": "5 crackers", "calories": 120}, {"item": "whole-grain tortillas", "serving": "1 tortilla (8 inch)", "calories": 146}, {"item": "whole-wheat bread", "serving": "1 slice", "calories": 81}, {"item": "zucchini", "serving": "1 cup sliced, cooked", "calories": 27}];
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var GOAL_KEY="swmi-cal-goal", LOG_KEY="swmi-cal-log-v1";
+  function dayKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+  var viewDate=new Date();
+  function loadLog(){try{var r=localStorage.getItem(LOG_KEY);return r?JSON.parse(r):{};}catch(e){return{};}}
+  function saveLog(l){try{localStorage.setItem(LOG_KEY,JSON.stringify(l));}catch(e){}}
+  function loadGoal(){try{var g=parseInt(localStorage.getItem(GOAL_KEY),10);return g>0?g:2000;}catch(e){return 2000;}}
+  function saveGoal(g){try{localStorage.setItem(GOAL_KEY,String(g));}catch(e){}}
+  var log=loadLog(), goal=loadGoal();
+
+  var $=function(id){return document.getElementById(id);};
+  var goalInput=$("cal-goal-input"), totalEl=$("cal-total"), ofGoalEl=$("cal-of-goal"),
+      fillEl=$("cal-fill"), noteEl=$("cal-note"), logEl=$("cal-log"),
+      searchEl=$("cal-search"), resultsEl=$("cal-results"), dateLabel=$("cal-date-label");
+  goalInput.value=goal;
+
+  function entryCals(e){return Math.round(e.calories*e.servings);}
+  function dayEntries(){var k=dayKey(viewDate);return log[k]||[];}
+  function setDayEntries(arr){log[dayKey(viewDate)]=arr;saveLog(log);}
+
+  function fmtDate(d){
+    var today=new Date();
+    if(dayKey(d)===dayKey(today))return "Today";
+    var y=new Date(today);y.setDate(y.getDate()-1);
+    if(dayKey(d)===dayKey(y))return "Yesterday";
+    return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+  }
+  function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+  function render(){
+    dateLabel.textContent=fmtDate(viewDate);
+    ofGoalEl.textContent="of "+goal.toLocaleString()+" cal";
+    var entries=dayEntries(), total=entries.reduce(function(a,e){return a+entryCals(e);},0);
+    totalEl.textContent=total.toLocaleString();
+    var pct=goal>0?Math.min(100,Math.round(total/goal*100)):0;
+    fillEl.style.width=pct+"%";
+    var left=goal-total;
+    noteEl.textContent=entries.length===0
+      ? "Nothing logged yet — search a food below to start."
+      : (left>=0 ? left.toLocaleString()+" cal left today." : "Over goal by "+Math.abs(left).toLocaleString()+" cal.");
+    if(entries.length===0){
+      logEl.innerHTML='<div class="cal-empty">No foods logged for this day yet.</div>';
+    }else{
+      logEl.innerHTML="";
+      entries.forEach(function(e,i){
+        var row=document.createElement("div");row.className="cal-row";
+        row.innerHTML='<div class="fi"><b></b><small></small></div>'+
+          '<div class="stepper"><button type="button" data-a="dec" aria-label="Fewer servings">&minus;</button>'+
+          '<span class="sv"></span>'+
+          '<button type="button" data-a="inc" aria-label="More servings">+</button></div>'+
+          '<div class="kc"></div><button type="button" class="cal-del" aria-label="Remove">&times;</button>';
+        row.querySelector("b").textContent=cap(e.item);
+        row.querySelector("small").textContent=e.serving+" · "+e.calories+" cal each";
+        row.querySelector(".sv").textContent=(e.servings%1?e.servings.toFixed(1):e.servings)+"x";
+        row.querySelector(".kc").textContent=entryCals(e)+" cal";
+        row.querySelector('[data-a="dec"]').addEventListener("click",function(){
+          e.servings=Math.max(0.5,Math.round((e.servings-0.5)*2)/2);setDayEntries(entries);render();});
+        row.querySelector('[data-a="inc"]').addEventListener("click",function(){
+          e.servings=Math.round((e.servings+0.5)*2)/2;setDayEntries(entries);render();});
+        row.querySelector(".cal-del").addEventListener("click",function(){
+          entries.splice(i,1);setDayEntries(entries);render();});
+        logEl.appendChild(row);
+      });
+    }
+    renderResults(searchEl.value);
+  }
+
+  function addEntry(item,serving,calories){
+    var entries=dayEntries();
+    entries.push({item:item,serving:serving,calories:calories,servings:1});
+    setDayEntries(entries);render();
+  }
+
+  function renderResults(q){
+    q=(q||"").trim().toLowerCase();
+    var list=FOODCALS.filter(function(f){
+      return !q||f.item.indexOf(q)>-1;
+    }).slice(0,60);
+    resultsEl.innerHTML="";
+    if(list.length===0){
+      resultsEl.innerHTML='<div class="cal-empty">No matches — try another search, or add it as a custom food below.</div>';
+      return;
+    }
+    list.forEach(function(f){
+      var row=document.createElement("div");row.className="cal-food";
+      row.innerHTML='<div class="fi"><b></b><small></small></div>'+
+        '<div class="kc"><span></span><small>per serving</small></div>'+
+        '<button type="button" class="cal-add">Add</button>';
+      row.querySelector("b").textContent=cap(f.item);
+      row.querySelector("small").textContent=f.serving;
+      row.querySelector(".kc span").textContent=f.calories+" cal";
+      row.querySelector(".cal-add").addEventListener("click",function(){
+        addEntry(f.item,f.serving,f.calories);searchEl.value="";});
+      resultsEl.appendChild(row);
+    });
+  }
+
+  goalInput.addEventListener("change",function(){
+    var g=parseInt(goalInput.value,10);
+    if(g>0){goal=g;saveGoal(g);render();}else{goalInput.value=goal;}
+  });
+  searchEl.addEventListener("input",function(){renderResults(searchEl.value);});
+  $("cal-prev").addEventListener("click",function(){viewDate.setDate(viewDate.getDate()-1);render();});
+  $("cal-next").addEventListener("click",function(){viewDate.setDate(viewDate.getDate()+1);render();});
+  $("cal-today").addEventListener("click",function(){viewDate=new Date();render();});
+  $("cal-cadd").addEventListener("click",function(){
+    var n=$("cal-cname").value.trim(), kc=parseInt($("cal-ckc").value,10);
+    if(!n||!(kc>=0)){return;}
+    addEntry(n.toLowerCase(),"1 serving",kc);
+    $("cal-cname").value="";$("cal-ckc").value="";
+  });
+  renderResults("");
+  render();
+})();
+</script>
 
 <script>
 if ("serviceWorker" in navigator) {
