@@ -1,6 +1,8 @@
-/* SWMI service worker — offline-first for the Shape tracker */
-const CACHE = "swmi-v1";
-const CORE = [
+/* SWMI service worker — offline-first for the Shape tracker.
+   Navigations are network-first so new versions reach the user;
+   everything else is cached for offline use. */
+var CACHE = "swmi-v2";
+var CORE = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
@@ -9,40 +11,58 @@ const CORE = [
   "./icon-180.png"
 ];
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", function (event) {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(CORE)).then(() => self.skipWaiting())
+    caches.open(CACHE).then(function (cache) { return cache.addAll(CORE); })
+      .then(function () { return self.skipWaiting(); })
   );
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", function (event) {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys().then(function (keys) {
+      return Promise.all(keys.filter(function (k) { return k !== CACHE; })
+        .map(function (k) { return caches.delete(k); }));
+    }).then(function () { return self.clients.claim(); })
   );
 });
 
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
+function cacheable(res) {
+  return res && (res.ok || res.type === "opaque");
+}
+
+self.addEventListener("fetch", function (event) {
+  var req = event.request;
   if (req.method !== "GET") return;
-  event.respondWith(
-    caches.match(req, { ignoreSearch: true }).then((cached) => {
-      const network = fetch(req).then((res) => {
-        // cache successful same- and cross-origin GETs for offline reuse
-        if (res && (res.ok || res.type === "opaque")) {
-          const copy = res.clone();
-          caches.open(CACHE).then((cache) => cache.put(req, copy));
+
+  // Navigations (the page itself): network first, cache fallback.
+  // Guarantees newly deployed versions are picked up.
+  if (req.mode === "navigate") {
+    event.respondWith(
+      fetch(req).then(function (res) {
+        if (cacheable(res)) {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (cache) { cache.put(req, copy); });
         }
         return res;
-      }).catch(() => {
-        // offline: serve the app shell for navigations
-        if (req.mode === "navigate") {
-          return caches.match("./index.html", { ignoreSearch: true });
+      }).catch(function () {
+        return caches.match("./index.html", { ignoreSearch: true });
+      })
+    );
+    return;
+  }
+
+  // Static assets: cache first, network fallback.
+  event.respondWith(
+    caches.match(req, { ignoreSearch: true }).then(function (cached) {
+      if (cached) return cached;
+      return fetch(req).then(function (res) {
+        if (cacheable(res)) {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (cache) { cache.put(req, copy); });
         }
-        return cached;
+        return res;
       });
-      return cached || network;
     })
   );
 });
